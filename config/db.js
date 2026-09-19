@@ -6,6 +6,10 @@ const db = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
+  port: 4000, // Port wajib TiDB Cloud[cite: 7]
+  ssl: {
+    rejectUnauthorized: false // Menghindari error sertifikat TLS di server cloud[cite: 7]
+  },
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
