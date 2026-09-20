@@ -7,27 +7,25 @@ const wishRoutes = require('./routes/wishRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors({
-  origin: [
-    'https://kemenlu-emub.vercel.app', 
-    'http://localhost:5173'
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}));
+// Middleware CORS Manual yang Pasti Berhasil
+app.use((req, res, next) => {
+  const allowedOrigins = ['https://kemenlu-emub.vercel.app', 'http://localhost:5173'];
+  const origin = req.headers.origin;
+  
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  // Tangani langsung preflight request (OPTIONS)
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  
+  next();
+});
+
 app.use(express.json());
-
-// Routes API (Pastikan baris ini ada agar /api/wishes bisa diakses)
-app.use('/api', wishRoutes);
-
-// Test Endpoint Root
-app.get('/', (req, res) => {
-  res.send('API Backend Express.js Kemenlu EM UB Running...');
-});
-
-// Start Server
-app.listen(PORT, () => {
-  console.log(`Server Express berjalan di http://localhost:${PORT}`);
-});
